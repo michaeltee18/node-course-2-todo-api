@@ -31,10 +31,10 @@ MongoClient.connect('mongodb://localhost:27017/ToDoApp', (err, db) => {
 
 // NOTE: challege is to update document in Users collection by changing name and incrementing the age
 db.collection('Users').findOneAndUpdate({
-  _id: new ObjectID('5b6723681d89c1414cab7775')
+  _id: new ObjectID('5b85acb6a219d4e3de32f0b4')
 }, {
   $set: {
-    name: 'Mike2'
+    name: 'Mike'
   },
   $inc: {age: 1}
 },  {
