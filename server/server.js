@@ -70,26 +70,13 @@ app.delete('/todos/:id', (req, res) => {
   {
     return res.status(404).send();
   }
-  //remove todo by  id:
-    //success
-      //if no doc, send 404
-      //if doc, send doc back with 200
-    //error
-      //400 with empty body
-// //this is what i did:  Todo.findById(id).then((todo) => {
-//     if(!todo){
-//       return res.status(404).send();
-//     }
-//       res.status(200).send({todo});
-//   }).catch((e) => {
-//       return res.status(400).send();
-//   });
+
 
   Todo.findByIdAndRemove(id).then((todo) => {
     if(!todo){
       return res.status(404).send();
     }
-      res.send(todo);
+      res.send({todo});
   }).catch((e) => {
     return res.status(400).send();
 });
