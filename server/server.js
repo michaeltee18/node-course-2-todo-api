@@ -1,6 +1,8 @@
-var express = require('express');
-var bodyParser = require('body-parser');
-var {ObjectID} = require('mongodb');
+const _ = require('lodash');
+const express = require('express');
+const bodyParser = require('body-parser');
+const {ObjectID} = require('mongodb');
+
 var {mongoose} = require('./db/mongoose');
 var {Todo} = require('./models/todo');
 var {User} = require('./models/user');
@@ -79,9 +81,39 @@ app.delete('/todos/:id', (req, res) => {
       res.send({todo});
   }).catch((e) => {
     return res.status(400).send();
-});
+  });
 });
 
+//use hatch to update resources
+app.patch('/todos/:id', (req, res) => {
+  var id = req.params.id;
+  var body = _.pick(req.body, ['text', 'completed']);
+
+  if(!ObjectID.isValid(id))
+  {
+    return res.status(404).send();
+  }
+
+  //check the completed value to set completed at.
+  if (_.isBoolean(body.completed) && body.completed){
+    //will run if true, else run something else or if it's not true.  .getTime gets javascript timestamp in milliseconds. Jan 1 1970 base unix
+    body.completedAt = new Date().getTime();
+  }
+  else {
+    body.completed = false;
+    body.completedAt = null;
+  }
+
+  Todo.findByIdAndUpdate(id, {$set: body}, {new: true}).then((todo) => {
+    if(!todo){
+      return res.status(404).send();
+    }
+
+    res.send({todo});
+  }).catch((e) => {
+    res.status(400).send();
+  })
+});
 
 app.listen(port, () => {
   console.log(`Started up at port ${port}`);
